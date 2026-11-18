@@ -183,7 +183,7 @@ function upd(){time++;if(ban>0)ban--;if(bub.t>0)bub.t--;
  p.g=0;p.y+=p.vy;for(const q of RS)if(hit(p,q)){if(p.vy>0){p.y=q.y-p.h;p.g=1}else p.y=q.y+q.h;p.vy=0}
  if(p.x<0)p.x=0;
  if(p.g){if(++gt>=6)safe=[p.x,p.y]}else gt=0;
- if(p.y>H+150){p.x=safe[0];p.y=safe[1];p.vx=p.vy=0;say('Hups!',50)}
+ if(p.y>H+150){p.x=safe[0];p.y=safe[1];p.vx=p.vy=0;say('Šílený!',50)}
  for(const m of L.i){const x=m[1]*T+20,y=m[2]*T+20;if(!got[m[0]]&&Math.abs(p.x+20-x)<34&&Math.abs(p.y+22-y)<40){got[m[0]]=1;say(D[m[0]].m)}}
  const e=L.ex*T;
  if(p.x+p.w>e-20){const miss=Object.keys(D).filter(k=>!got[k]).map(k=>D[k].n);
