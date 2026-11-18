@@ -145,7 +145,7 @@ const G=(a,b)=>{const g=c.createLinearGradient(0,0,0,H);g.addColorStop(0,a);g.ad
 let cam=0,time=0;
 const ea=(g,k,f)=>{const n=Math.ceil(1200/g),s=g*n;for(let i=0;i<n;i++){let x=(i*g-cam*k)%s;if(x<-g)x+=s;f(x,i)}};
 // Plakáty v kině (další plakát = přidej název souboru do seznamu) a slidy v Prezentaci (SL = počet slidů)
-const PO=['plakat1.jpg','plakat2.jpg','plakat3.jpg'].map(f=>{const m=new Image();m.src=f;return m});
+const PO=['plakat1.jpg','plakat2.jpg','plakat3.jpg','plakat4.jpg','plakat5.jpg','plakat6.jpg','plakat7.jpg'].map(f=>{const m=new Image();m.src=f;return m});
 const SL=Array.from({length:8},(_,i)=>{const m=new Image();m.src='slide'+(i+1)+'.jpg';return m});
 // Pozadí levelů
 const BG=[
@@ -161,8 +161,8 @@ const BG=[
  ea(900,.15,x=>{c.save();c.translate(x+300,190);c.rotate(-.3);c.strokeStyle='#d64545';c.lineWidth=5;c.beginPath();c.arc(0,0,62,0,7);c.stroke();tx('SCHVÁLENO',0,8,22,'#d64545','center');c.restore();
   c.strokeStyle='#1f3fa0';c.lineWidth=3;c.beginPath();c.moveTo(x+520,330);c.bezierCurveTo(x+550,270,x+560,380,x+600,300);c.bezierCurveTo(x+620,270,x+640,340,x+680,320);c.stroke()})},
 ()=>{G('#1b1030','#3d1a4d');
- const g=280,per=g*PO.length;
- PO.forEach((m,i)=>{let x=(i*g-cam*.3)%per;if(x<-g)x+=per;
+ const g=240,per=g*PO.length;
+ PO.forEach((m,i)=>{let x=(i*g-cam*.4)%per;if(x<-g)x+=per;
   if(m.complete&&m.naturalWidth){const h=215,w=h*m.naturalWidth/m.naturalHeight;c.drawImage(m,x,70,w,h);c.strokeStyle=O;c.lineWidth=4;c.strokeRect(x,70,w,h)}});
  for(let i=0;i<5;i++){c.fillStyle=i%2?'#a5223a':'#7a1526';c.fillRect(i*14,0,14,H);c.fillRect(W-70+i*14,0,14,H)}
  c.fillStyle=O;c.fillRect(70,0,3,H);c.fillRect(W-73,0,3,H);
