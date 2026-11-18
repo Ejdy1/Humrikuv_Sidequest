@@ -34,8 +34,15 @@ button{font:inherit;background:none;border:0;color:#9aa;cursor:pointer;text-deco
 .fl{position:absolute;height:clamp(50px,13vw,110px);animation:bob 3s ease-in-out infinite}
 .f1{left:9%;top:52%}.f2{right:10%;top:38%;animation-delay:.6s}.f3{left:18%;top:10%;animation-delay:1.2s}
 @keyframes bob{50%{transform:translateY(-14px) rotate(3deg)}}
-#go,#stb{font:bold clamp(16px,3vw,24px) 'Trebuchet MS',sans-serif;color:#2b1d1d;background:#ffd23f;border:3px solid #2b1d1d;border-radius:14px;padding:.6em 1.4em;cursor:pointer;text-decoration:none;box-shadow:5px 5px 0 #2b1d1d;margin:.6em}
-#go:hover,#stb:hover{transform:translate(2px,2px);box-shadow:3px 3px 0 #2b1d1d}
+#go,#stb,#tit{font:bold clamp(16px,3vw,24px) 'Trebuchet MS',sans-serif;color:#2b1d1d;background:#ffd23f;border:3px solid #2b1d1d;border-radius:14px;padding:.6em 1.4em;cursor:pointer;text-decoration:none;box-shadow:5px 5px 0 #2b1d1d;margin:.6em}
+#go:hover,#stb:hover,#tit:hover{transform:translate(2px,2px);box-shadow:3px 3px 0 #2b1d1d}
+    #cred{background:#14122b;overflow:hidden}
+.cr{position:relative;width:100%;height:100%;overflow:hidden;text-align:center;color:#fff;font-size:clamp(13px,2.6vw,22px);line-height:1.4}
+.crin{position:absolute;left:0;right:0;top:100%;padding:0 6% 28%;animation:roll 45s linear forwards}
+.crin h2{font:600 2.6em 'Caveat','Georgia',serif;color:#ffd23f;margin:.2em 0 1em}
+.crin p{margin:0 0 1.4em}.crin small{display:block;color:#ffb3c7;letter-spacing:.15em;text-transform:uppercase;font-size:.65em}
+@keyframes roll{to{transform:translateY(-100%)}}
+#cb{position:absolute;right:10px;bottom:6px;z-index:2}
 </style>
 </head>
 <body>
@@ -58,7 +65,19 @@ button{font:inherit;background:none;border:0;color:#9aa;cursor:pointer;text-deco
 <p><small>Ovládání: A / D = pohyb, mezerník = skok.</small></p>
 <div id="sg"></div>
 </div></div>
-
+<!-- TITULKY (obsah si uprav podle sebe) -->
+<div class="ov" id="cred" hidden><div class="cr"><div class="crin">
+<h2>Humříkův Sidequest</h2>
+<p><small>Režie a scénář</small>Vývojář</p>
+<p><small>Hlavní role</small>Humřík</p>
+<p><small>Vedlejší role</small>Vývojář s míčkem<br>Pes</p>
+<p><small>Nápoje</small>Jägermeister<br>Pivo<br>Desperados</p>
+<p><small>Prostředí</small>Discord · Smlouva · Kino · Prezentace · Silvestr</p>
+<p><small>Speciální poděkování</small>Smlouvě za to, že existuje</p>
+<p><small>Upozornění</small>Při natáčení nebyl zraněn žádný humr, jen trochu opilý.</p>
+<p><small>Jakákoli podobnost se skutečností je čistě náhodná.</small></p>
+<p><b>Konec</b></p>
+</div></div><button id="cb">zpět na poukaz</button></div>
 <!-- KONEC: poukaz (texty si klidně uprav) -->
     <!-- PŘÍBĚH po podpisu smlouvy -->
 <div class="ov" id="story" hidden><div class="paper">
@@ -84,6 +103,7 @@ button{font:inherit;background:none;border:0;color:#9aa;cursor:pointer;text-deco
 <div class="pl"><span>Místo setkání</span><b>McPárty</b> · <b>Brno</b> · <b>Chata</b><br>nebo jiné místo po domluvě s vývojářem</div>
 <small>Upozornění: Vývojář má tendenci se na tebe těšit</small>
 </div>
+    <p style="text-align:center"><button id="tit">Titulky</button></p>
 </div></div>
 </div>
 <p><button id="sk">přeskočit level</button></p>
@@ -124,7 +144,9 @@ const tx=(s,x,y,z,f,a='left',o=0)=>{c.font='bold '+z+'px '+F;c.textAlign=a;if(o)
 const G=(a,b)=>{const g=c.createLinearGradient(0,0,0,H);g.addColorStop(0,a);g.addColorStop(1,b);c.fillStyle=g;c.fillRect(0,0,W,H)};
 let cam=0,time=0;
 const ea=(g,k,f)=>{const n=Math.ceil(1200/g),s=g*n;for(let i=0;i<n;i++){let x=(i*g-cam*k)%s;if(x<-g)x+=s;f(x,i)}};
-
+// Plakáty v kině (další plakát = přidej název souboru do seznamu) a slidy v Prezentaci (SL = počet slidů)
+const PO=['plakat1.jpg','plakat2.jpg','plakat3.jpg'].map(f=>{const m=new Image();m.src=f;return m});
+const SL=Array.from({length:8},(_,i)=>{const m=new Image();m.src='slide'+(i+1)+'.jpg';return m});
 // Pozadí levelů
 const BG=[
 ()=>{G('#262a6b','#5b45b0');
@@ -139,19 +161,17 @@ const BG=[
  ea(900,.15,x=>{c.save();c.translate(x+300,190);c.rotate(-.3);c.strokeStyle='#d64545';c.lineWidth=5;c.beginPath();c.arc(0,0,62,0,7);c.stroke();tx('SCHVÁLENO',0,8,22,'#d64545','center');c.restore();
   c.strokeStyle='#1f3fa0';c.lineWidth=3;c.beginPath();c.moveTo(x+520,330);c.bezierCurveTo(x+550,270,x+560,380,x+600,300);c.bezierCurveTo(x+620,270,x+640,340,x+680,320);c.stroke()})},
 ()=>{G('#1b1030','#3d1a4d');
- ea(330,.3,(x,i)=>{const k=i%3,y=70;rr(x,y,150,215,8,['#2a1245','#ffd23f','#3d6fb5'][k]);
-  if(k==0){c.beginPath();c.moveTo(x+113,y+90);c.arc(x+75,y+90,38,0,Math.PI,true);[[37,150],[50,138],[62,150],[75,138],[88,150],[100,138],[113,150]].forEach(([a,b])=>c.lineTo(x+a,y+b));c.closePath();c.fillStyle='#fff';c.fill();c.strokeStyle=O;c.lineWidth=3;c.stroke();
-   ci(x+62,y+90,6,O,0);ci(x+88,y+90,6,O,0);ci(x+75,y+110,6,O,0);tx('HOROR',x+75,y+190,26,'#ff4d4d','center')}
-  else if(k==1){ci(x+75,y+95,45,'#fff3a0');ci(x+60,y+84,6,O,0);ci(x+90,y+84,6,O,0);c.beginPath();c.arc(x+75,y+100,26,.2,2.94);c.strokeStyle=O;c.lineWidth=4;c.stroke();tx('KOMEDIE',x+75,y+190,24,O,'center')}
-  else{rr(x+35,y+50,80,100,4,'#fff');c.fillStyle='#b9c6da';for(let j=0;j<5;j++)c.fillRect(x+45,y+66+j*16,60,5);rr(x+98,y+120,34,34,6,'#e8552d');c.beginPath();c.arc(x+135,y+136,9,-1.5,1.5);c.strokeStyle='#e8552d';c.lineWidth=5;c.stroke();tx('THE OFFICE',x+75,y+190,20,'#fff','center')}});
+ const g=280,per=g*PO.length;
+ PO.forEach((m,i)=>{let x=(i*g-cam*.3)%per;if(x<-g)x+=per;
+  if(m.complete&&m.naturalWidth){const h=215,w=h*m.naturalWidth/m.naturalHeight;c.drawImage(m,x,70,w,h);c.strokeStyle=O;c.lineWidth=4;c.strokeRect(x,70,w,h)}});
  for(let i=0;i<5;i++){c.fillStyle=i%2?'#a5223a':'#7a1526';c.fillRect(i*14,0,14,H);c.fillRect(W-70+i*14,0,14,H)}
  c.fillStyle=O;c.fillRect(70,0,3,H);c.fillRect(W-73,0,3,H);
  for(let x=20;x<W;x+=40)ci(x,18,6,((x/40|0)+(time>>4))%2?'#ffd23f':'#8a6a1a',0)},
-()=>{c.fillStyle='#fff';c.fillRect(0,0,W,H);
- ea(330,.2,(x,i)=>{for(let j=0;j<3;j++){ci(x+20,110+j*38,5,'#9db8ee',0);c.fillStyle='#e2eaf8';c.fillRect(x+36,106+j*38,150-j*20,8)}});
- ea(150,.35,(x,i)=>{const h=60+(i*67%150);c.fillStyle='#d6e4ff';c.fillRect(x,430-h,70,h)});
- c.fillStyle='#2f6fd6';c.fillRect(0,0,W,46);tx('Jak balit holky',20,31,22,'#fff');
- const s=Math.min(11,Math.floor(cam/Math.max(1,L.ex*T+360-W-0)*12))+1;tx('Slide '+s+'/12',W-20,31,22,'#fff','right')},
+()=>{const n=SL.length,t=Math.min(1,cam/Math.max(1,L.ex*T+360-W))*(n-1),i=Math.floor(t),j=Math.min(n-1,i+1),f=Math.max(0,Math.min(1,(t-i-.35)/.3));
+ c.fillStyle='#fff';c.fillRect(0,0,W,H);
+ if(SL[i].complete&&SL[i].naturalWidth)c.drawImage(SL[i],0,0,W,H);
+ if(f>0&&SL[j].complete&&SL[j].naturalWidth){c.globalAlpha=f;c.drawImage(SL[j],0,0,W,H);c.globalAlpha=1}
+ tx('Slide '+((f>.5?j:i)+1)+'/'+n,W-16,28,16,'#8a8a99','right')},
 ()=>{G('#070b2e','#2b2f80');c.fillStyle='#fff';
  for(let i=0;i<50;i++){c.globalAlpha=.5+.5*Math.sin(time*.05+i);c.fillRect((i*97)%W,(i*53)%330,2,2)}c.globalAlpha=1;
  const sx=540-cam*.1;c.fillStyle='#777';c.fillRect(sx+100,370,20,80);rr(sx,170,220,200,24,'#da291c');
@@ -183,7 +203,7 @@ function upd(){time++;if(ban>0)ban--;if(bub.t>0)bub.t--;
  p.g=0;p.y+=p.vy;for(const q of RS)if(hit(p,q)){if(p.vy>0){p.y=q.y-p.h;p.g=1}else p.y=q.y+q.h;p.vy=0}
  if(p.x<0)p.x=0;
  if(p.g){if(++gt>=6)safe=[p.x,p.y]}else gt=0;
- if(p.y>H+150){p.x=safe[0];p.y=safe[1];p.vx=p.vy=0;say('Šílený!',50)}
+ if(p.y>H+150){p.x=safe[0];p.y=safe[1];p.vx=p.vy=0;say('Jsem kantáres!',50)}
  for(const m of L.i){const x=m[1]*T+20,y=m[2]*T+20;if(!got[m[0]]&&Math.abs(p.x+20-x)<34&&Math.abs(p.y+22-y)<40){got[m[0]]=1;say(D[m[0]].m)}}
  const e=L.ex*T;
  if(p.x+p.w>e-20){const miss=Object.keys(D).filter(k=>!got[k]).map(k=>D[k].n);
@@ -232,6 +252,8 @@ const sg=document.getElementById('sg');
 sg.onclick=()=>{if(sg.classList.contains('on'))return;sg.textContent='Humřík';sg.classList.add('on');setTimeout(()=>{intro.hidden=true;document.getElementById('story').hidden=false},900)};
 document.getElementById('stb').onclick=()=>{document.getElementById('story').hidden=true;st='play';ban=150};
     document.getElementById('go').onclick=()=>{document.getElementById('mnu').hidden=true;intro.hidden=false};
+    document.getElementById('tit').onclick=()=>{end.hidden=true;document.getElementById('cred').hidden=false};
+document.getElementById('cb').onclick=()=>{document.getElementById('cred').hidden=true;end.hidden=false};
 load(0,'menu');ban=0;requestAnimationFrame(frame);
 </script>
 </body>
