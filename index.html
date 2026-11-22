@@ -127,8 +127,8 @@ const zz=(x,y,n,dx,w=3)=>Array.from({length:n},(_,i)=>[x+(i%2?dx:0),y-i*3,w]); /
 const LV=[
 {n:'Discord',pc:['#5865f2','#8a94ff'],ex:68,i:[['J',11,6],['B',20,10],['D',38,8]],
  p:[[0,11,12],[15,11,9],[27,11,10],[40,11,12],[55,11,13],[6,9,3],[10,7,3],[37,9,2],[44,9,3],[47,7,3],[58,9,3]]},
-{n:'Smlouva',pc:['#f3e3b5','#d9b45a'],ex:72,i:[['J',5,7],['B',15,10],['D',30,-8]],
- p:[[0,11,9],[13,11,5],[22,11,10],[36,11,5],[45,11,6],[64,11,8],[4,8,3],[52,10,2],[56,9,2],[60,10,2],...zz(23,8,6,6)]},
+{n:'Smlouva',pc:['#2b579a','#6c9ae0'],ex:24,fx:1,s:[2.071,-17.1],i:[['B',12.357,-17],['J',19.214,-6.5],['D',2.071,1]],ld:[[15.836,-10.25,0.9,6.25],[2.121,7,0.9,4],[19.264,-17,0.9,7.75]],sg:[[377,0],[677,1]],
+ p:[[0,-19,1.714,30.75],[22.286,-19,1.714,27.75],[0,11,24],[1.714,-16,3.429,0.75],[5.143,-15.25,1.714,3],[5.143,-13,13.714,0.75],[17.143,-16,1.714,3.75],[8.571,-14.5,1.714,0.75],[12,-16,1.714,0.75],[3.429,-9.25,1.714,0.75],[5.143,-9.25,1.714,6],[5.143,-4,13.714,0.75],[17.143,-9.25,1.714,6],[17.143,-9.25,5.143,0.75],[13.714,-8.5,1.714,0.75],[8.571,-7.75,1.714,0.75],[1.714,-7,1.714,0.75],[3.429,-4.75,1.714,0.75],[18.857,-5.5,1.714,0.75],[20.571,-2.5,1.714,0.75],[1.714,-1.75,1.714,0.75],[3.429,-1,1.714,0.75],[5.143,-0.25,1.714,0.75],[6.857,0.5,1.714,0.75],[8.571,1.25,1.714,0.75],[10.286,2,1.714,0.75],[12,2.75,1.714,0.75],[13.714,3.5,1.714,0.75],[15.429,4.25,1.714,0.75],[17.143,5,1.714,0.75],[17.143,-0.25,1.714,0.75],[1.714,2,1.714,0.75],[20.571,2,1.714,0.75],[5.143,4.25,1.714,0.75],[8.571,5.75,1.714,0.75],[3.429,8,18.857,0.75]]},
 {n:'Kino',pc:['#7a1526','#e0b84a'],ex:80,i:[['J',13,8],['B',28,-8],['D',52,-8]],
  p:[[0,11,7],[20,11,12],[36,11,4],[44,11,12],[60,11,20],[9,10,2],[13,9,2],[17,10,2],...zz(21,8,6,6),...zz(45,8,6,6)]},
 {n:'Prezentace',pc:['#2f6fd6','#6fa0f5'],ex:90,i:[['B',16,6],['D',37,-8],['J',63,-8]],
@@ -156,10 +156,11 @@ const BG=[
   if(t=='m'){ci(x+20,y+22,20,['#f06292','#ffb74d','#4dd0e1'][i%3]);ci(x+34,y+36,7,'#3ba55d');rr(x+48,y,w+28,44,16,'#2a2d7a');tx(s,x+62,y+29,19,'#fff')}
   else{rr(x,y,w+44,44,22,t=='v'?'#2f8a6a':'#4a4fc4');tx(s,x+22,y+29,19,'#fff')}});
  row(A,50,0);row(B,200,150)},
-()=>{c.fillStyle='#f7edd0';c.fillRect(0,0,W,H);c.fillStyle='#d8c89c';
- ea(200,.3,(x,i)=>{for(let j=0;j<5;j++)c.fillRect(x,60+(i%2)*170+j*16,j==4?70:150,7)});
- ea(900,.15,x=>{c.save();c.translate(x+300,190);c.rotate(-.3);c.strokeStyle='#d64545';c.lineWidth=5;c.beginPath();c.arc(0,0,62,0,7);c.stroke();tx('SCHVÁLENO',0,8,22,'#d64545','center');c.restore();
-  c.strokeStyle='#1f3fa0';c.lineWidth=3;c.beginPath();c.moveTo(x+520,330);c.bezierCurveTo(x+550,270,x+560,380,x+600,300);c.bezierCurveTo(x+620,270,x+640,340,x+680,320);c.stroke()})},
+()=>{c.fillStyle='#d9dee7';c.fillRect(0,0,W,H);c.fillStyle='#fff';c.fillRect(60,0,W-120,H);c.fillStyle='#c4ccda';c.fillRect(57,0,3,H);c.fillRect(W-60,0,3,H);
+ const s=Math.max(0,Math.min(1,(camY-L.top)/Math.max(1,-L.top))),R=['I','II','III','IV','V','VI','VII','VIII'];
+ R.forEach((r,i)=>{const y=80+i*170-s*860;if(y<-60||y>H+20)return;
+  tx('Článek '+r,100,y,30,'#aab6cc');c.fillStyle='#eef1f6';for(let j=0;j<4;j++)c.fillRect(100,y+16+j*18,j==3?260:W-200,8)});
+ c.fillStyle='#2b579a';c.fillRect(0,0,W,20);tx('Smlouva.docx – Word',W/2,15,13,'#fff','center')},
 ()=>{G('#1b1030','#3d1a4d');
  const g=240,per=g*PO.length;
  PO.forEach((m,i)=>{let x=(i*g-cam*.4)%per;if(x<-g)x+=per;
@@ -182,22 +183,26 @@ const BG=[
 ];
 
 // Stav hry
-let st='menu',li=0,L,RS,got,p,safe,gt=0,camY=0,bub={t:0,s:''},ban=0,fade=0,slideT=0,pj=0;
+let st='menu',li=0,L,RS,RL=[],sgd=[],got,p,safe,gt=0,camY=0,bub={t:0,s:''},ban=0,fade=0,slideT=0,pj=0;
 const keys={};
 const hit=(a,b)=>a.x<b.x+b.w&&a.x+a.w>b.x&&a.y<b.y+b.h&&a.y+a.h>b.y;
 const say=(s,t=70)=>{bub.s=s;bub.t=t};
-function load(n,s='play'){li=n;L=LV[n];L.top=Math.min(0,Math.min(...L.p.map(a=>a[1]))*T-160);RS=L.p.map(([x,y,w])=>({x:x*T,y:y*T,w:w*T,h:y>=11?(14-y)*T:T}));
- got={};safe=[60,396];gt=0;camY=0;p={x:60,y:396,w:40,h:44,vx:0,vy:0,f:1,g:0,coy:0,buf:0,sl:0,rot:0,v:0};cam=0;ban=150;fade=1;slideT=0;bub.t=0;st=s}
+function load(n,s='play'){li=n;L=LV[n];L.top=Math.min(0,Math.min(...L.p.map(a=>a[1]))*T-160);RS=L.p.map(([x,y,w,h])=>({x:x*T,y:y*T,w:w*T,h:(h||(y>=11?14-y:1))*T}));
+ RL=(L.ld||[]).map(([x,y,w,h])=>({x:x*T,y:y*T,w:w*T,h:h*T}));sgd=[];
+ const sx=L.s?L.s[0]*T:60,sy=L.s?L.s[1]*T:396;
+ got={};safe=[sx,sy];gt=0;p={x:sx,y:sy,w:40,h:44,vx:0,vy:0,f:1,g:0,coy:0,buf:0,sl:0,rot:0,v:0,lad:0};camY=Math.max(L.top,Math.min(0,sy-300));cam=0;ban=150;fade=1;slideT=0;bub.t=0;st=s}
 function next(){if(li>=4){st='end';end.hidden=false;fade=0;return}load(li+1)}
 
 function upd(){time++;if(ban>0)ban--;if(bub.t>0)bub.t--;
  if(st==='slide')return slide();if(st!=='play')return;
  if(fade>0)fade=Math.max(0,fade-.03);
- const l=keys.a||keys.arrowleft,r=keys.d||keys.arrowright,j=keys[' ']||keys.w||keys.arrowup;
+ const l=keys.a||keys.arrowleft,r=keys.d||keys.arrowright,up=keys.w||keys.arrowup,dn=keys.s||keys.arrowdown;
+ const ld=RL.some(q=>hit({x:p.x+8,y:p.y,w:p.w-16,h:p.h},q));if(ld&&(up||dn))p.lad=1;if(!ld)p.lad=0;
+ const j=keys[' ']||(up&&!p.lad);
  p.vx+=(((r?1:0)-(l?1:0))*4.2-p.vx)*.25;if(r&&!l)p.f=1;if(l&&!r)p.f=-1;
- p.vy=Math.min(p.vy+.6,14);
+p.vy=p.lad?((dn?1:0)-(up?1:0))*2.6:Math.min(p.vy+.6,14);
  if(j&&!pj)p.buf=6;else p.buf--;pj=j;p.coy=p.g?6:p.coy-1;
- if(p.buf>0&&p.coy>0){p.vy=-14;p.buf=0;p.coy=0}
+ if(p.lad&&keys[' ']&&p.buf>0){p.lad=0;p.vy=-11;p.buf=0}else if(p.buf>0&&p.coy>0&&!p.lad){p.vy=-14;p.buf=0;p.coy=0}
  if(!j&&p.vy<-5)p.vy=-5;
  p.x+=p.vx;for(const q of RS)if(hit(p,q)){p.x=p.vx>0?q.x-p.w:q.x+q.w;p.vx=0}
  p.g=0;p.y+=p.vy;for(const q of RS)if(hit(p,q)){if(p.vy>0){p.y=q.y-p.h;p.g=1}else p.y=q.y+q.h;p.vy=0}
@@ -209,12 +214,20 @@ function upd(){time++;if(ban>0)ban--;if(bub.t>0)bub.t--;
  if(p.x+p.w>e-20){const miss=Object.keys(D).filter(k=>!got[k]).map(k=>D[k].n);
   if(!miss.length){st='slide';slideT=0;p.v=0;p.sl=0;p.vx=0}
   else{p.x=e-20-p.w;p.vx=0;say('Jsem ještě moc opilý! Chybí mi: '+miss.join(', ')+'.',120)}}
- cam+=(Math.max(0,Math.min(L.ex*T+360-W,p.x-380))-cam)*.12;camY+=(Math.max(L.top,Math.min(0,p.y-300))-camY)*.1}
+ if(L.sg)L.sg.forEach(([x],i)=>{if(!sgd[i]&&p.x+20>x&&p.y>300)sgd[i]=time});
+ cam+=(Math.max(0,Math.min(L.ex*T+360-W,(L.fx&&p.y<310)?0:p.x-380))-cam)*.12;
 
 function slide(){slideT++;camY*=.9;const e=L.ex*T;
  if(!p.sl){p.x+=3;if(p.x+p.w/2>=e){p.sl=1;p.q=0;p.f=-1;say('Tak to se nestalo',230)}}
  else{p.q++;p.x+=1+Math.min(.7,p.q*.01);const d=Math.max(0,p.x+p.w/2-e);p.y=396+d;p.rot=Math.min(.7,d/80);
   if(p.q>210)fade=(p.q-210)/25;if(p.q>235)next()}}
+               function signature(x,k,t){const y=388,a=t?Math.min(1,(time-t)/20):0;
+ c.strokeStyle='#556';c.lineWidth=2;c.beginPath();c.moveTo(x-75,y);c.lineTo(x+75,y);c.stroke();
+ tx(k?'Podpis svědka':'Podpis účastníka',x,y+16,13,'#556','center');
+ if(a>0){c.globalAlpha=a;
+  if(!k){c.font="600 38px Caveat,Georgia,serif";c.textAlign='center';c.fillStyle='#1f3fa0';c.fillText('Humřík',x,y-4)}
+  else{c.save();c.translate(x,y-19);c.beginPath();c.moveTo(-34,0);c.quadraticCurveTo(-8,-4,26,-17);c.quadraticCurveTo(18,-5,22,0);c.quadraticCurveTo(18,5,26,17);c.quadraticCurveTo(-8,4,-34,0);c.closePath();c.fillStyle='#ff9f43';c.fill();c.strokeStyle=O;c.lineWidth=3;c.stroke();c.lineWidth=2;c.beginPath();c.moveTo(-14,0);c.lineTo(20,-10);c.moveTo(-14,0);c.lineTo(20,10);c.stroke();c.restore()}
+  c.globalAlpha=1}}
 
 function drawP(){const dw=84,dh=SP.naturalHeight?dw*SP.naturalHeight/SP.naturalWidth:dw,ok=SP.complete&&SP.naturalWidth;
  c.save();
@@ -231,6 +244,8 @@ function drawP(){const dw=84,dh=SP.naturalHeight?dw*SP.naturalHeight/SP.naturalW
 function draw(){BG[li]();c.save();c.translate(-Math.round(cam),-Math.round(camY));
  const e=L.ex*T;c.fillStyle=L.pc[1];c.strokeStyle=O;c.lineWidth=3;c.beginPath();c.moveTo(e,440);c.lineTo(e+420,860);c.lineTo(e,860);c.fill();c.stroke();
  for(const q of RS){if(q.x+q.w<cam||q.x>cam+W)continue;c.fillStyle=L.pc[0];c.fillRect(q.x,q.y,q.w,q.h);c.fillStyle=L.pc[1];c.fillRect(q.x,q.y,q.w,10);c.strokeRect(q.x,q.y,q.w,q.h)}
+               for(const q of RL){c.strokeStyle='#8a4b1f';c.lineWidth=5;c.beginPath();c.moveTo(q.x+4,q.y);c.lineTo(q.x+4,q.y+q.h);c.moveTo(q.x+q.w-4,q.y);c.lineTo(q.x+q.w-4,q.y+q.h);c.stroke();c.strokeStyle='#c0661e';c.lineWidth=4;c.beginPath();for(let y=q.y+10;y<q.y+q.h;y+=16){c.moveTo(q.x+4,y);c.lineTo(q.x+q.w-4,y)}c.stroke();c.lineWidth=3;c.strokeStyle=O}
+if(L.sg)L.sg.forEach(([x,k],i)=>signature(x,k,sgd[i]));
                 if(li===4&&VY.complete&&VY.naturalWidth){const h=180,fw=VY.naturalWidth/30;c.drawImage(VY,(Math.floor(time/10)%30)*fw,0,fw,VY.naturalHeight,92*T,440-h,h*fw/VY.naturalHeight,h)}
  for(const m of L.i)if(!got[m[0]])drawDrink(m[0],m[1]*T+20,m[2]*T+20+Math.sin(time*.07+m[1])*4);
  drawP();
