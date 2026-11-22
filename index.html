@@ -2,7 +2,9 @@
 <html lang="cs">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
 <title>Humříkův Sidequest</title>
 <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&display=swap" rel="stylesheet">
 <style>
@@ -43,11 +45,26 @@ button{font:inherit;background:none;border:0;color:#9aa;cursor:pointer;text-deco
 .crin p{margin:0 0 1.4em}.crin small{display:block;color:#ffb3c7;letter-spacing:.15em;text-transform:uppercase;font-size:.65em}
 @keyframes roll{to{transform:translateY(-100%)}}
 #cb{position:absolute;right:10px;bottom:6px;z-index:2}
+    body{touch-action:manipulation;overscroll-behavior:none}
+.touch #w{max-width:min(100vw,calc(100vh*1.714));max-width:min(100vw,calc(100dvh*1.714))}
+.touch #tc{display:flex}
+#tc{display:none;position:absolute;left:0;right:0;bottom:10px;padding:0 14px;justify-content:space-between;align-items:flex-end;pointer-events:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+#tc>*{pointer-events:auto;touch-action:none}
+#pad{display:flex;width:clamp(170px,26vw,250px);height:clamp(70px,10vw,96px);border-radius:48px;background:rgba(20,18,43,.45);border:3px solid rgba(255,255,255,.6)}
+#pad span{flex:1;display:flex;align-items:center;justify-content:center;font-size:clamp(26px,5vw,40px);color:#fff}
+#act{display:flex;gap:12px;align-items:flex-end}
+.tb{width:clamp(66px,10vw,92px);height:clamp(66px,10vw,92px);border-radius:50%;background:rgba(255,210,63,.55);border:3px solid rgba(43,29,29,.7);color:#2b1d1d;font:bold clamp(16px,2.6vw,22px) 'Trebuchet MS',sans-serif;display:flex;align-items:center;justify-content:center}
+.tb.on{background:rgba(255,210,63,.95)}
+.tb.big{width:clamp(84px,13vw,116px);height:clamp(84px,13vw,116px)}
+#tc:not(.ld) .ud{display:none}
 </style>
 </head>
 <body>
 <div id="w">
 <canvas id="c" width="960" height="560"></canvas>
+    <!-- DOTYKOVÉ OVLÁDÁNÍ -->
+<div id="tc"><div id="pad"><span>◀</span><span>▶</span></div>
+<div id="act"><div class="tb ud" data-k="s">▼</div><div class="tb ud" data-k="w">▲</div><div class="tb big" data-k=" ">SKOK</div></div></div>
     <!-- MENU -->
 <div class="ov" id="mnu"><img class="fl f1" src="jager.png" alt=""><img class="fl f2" src="pivo.png" alt=""><img class="fl f3" src="desperados.png" alt="">
 <div class="mn"><h1>Humříkův<br>Sidequest</h1><img id="mh" src="humrik.gif" alt="Humřík"><button id="go">Podepsat smlouvu</button></div></div>
@@ -190,7 +207,7 @@ const say=(s,t=70)=>{bub.s=s;bub.t=t};
 function load(n,s='play'){li=n;L=LV[n];L.top=Math.min(0,Math.min(...L.p.map(a=>a[1]))*T-160);RS=L.p.map(([x,y,w,h])=>({x:x*T,y:y*T,w:w*T,h:(h||(y>=11?14-y:1))*T}));
  RL=(L.ld||[]).map(([x,y,w,h])=>({x:x*T,y:y*T,w:w*T,h:h*T}));sgd=[];
  const sx=L.s?L.s[0]*T:60,sy=L.s?L.s[1]*T:396;
- got={};safe=[sx,sy];gt=0;p={x:sx,y:sy,w:40,h:44,vx:0,vy:0,f:1,g:0,coy:0,buf:0,sl:0,rot:0,v:0,lad:0};camY=Math.max(L.top,Math.min(0,sy-300));cam=0;ban=150;fade=1;slideT=0;bub.t=0;st=s}
+ got={};safe=[sx,sy];gt=0;p={x:sx,y:sy,w:40,h:44,vx:0,vy:0,f:1,g:0,coy:0,buf:0,sl:0,rot:0,v:0,lad:0};camY=Math.max(L.top,Math.min(0,sy-300));cam=0;ban=150;fade=1;slideT=0;bub.t=0;st=s;document.getElementById('tc').classList.toggle('ld',!!L.ld)}
 function next(){if(li>=4){st='end';end.hidden=false;fade=0;return}load(li+1)}
 
 function upd(){time++;if(ban>0)ban--;if(bub.t>0)bub.t--;
@@ -269,6 +286,19 @@ document.getElementById('stb').onclick=()=>{document.getElementById('story').hid
     document.getElementById('go').onclick=()=>{document.getElementById('mnu').hidden=true;intro.hidden=false};
     document.getElementById('tit').onclick=()=>{end.hidden=true;document.getElementById('cred').hidden=false};
 document.getElementById('cb').onclick=()=>{document.getElementById('cred').hidden=true;end.hidden=false};
+    // DOTYKOVÉ OVLÁDÁNÍ (iPad)
+if(matchMedia('(pointer:coarse)').matches||navigator.maxTouchPoints>0)document.documentElement.classList.add('touch');
+const pad=document.getElementById('pad');let padOn=0;
+const padSet=e=>{const r=pad.getBoundingClientRect();if(e.clientX-r.left<r.width/2){keys.a=1;delete keys.d}else{keys.d=1;delete keys.a}};
+const padEnd=()=>{padOn=0;delete keys.a;delete keys.d};
+pad.addEventListener('pointerdown',e=>{padOn=1;pad.setPointerCapture(e.pointerId);padSet(e)});
+pad.addEventListener('pointermove',e=>{if(padOn)padSet(e)});
+pad.addEventListener('pointerup',padEnd);pad.addEventListener('pointercancel',padEnd);
+document.querySelectorAll('.tb').forEach(b=>{const k=b.dataset.k,off=()=>{delete keys[k];b.classList.remove('on')};
+ b.addEventListener('pointerdown',e=>{b.setPointerCapture(e.pointerId);keys[k]=1;b.classList.add('on')});
+ b.addEventListener('pointerup',off);b.addEventListener('pointercancel',off)});
+addEventListener('blur',()=>{for(const k in keys)delete keys[k]});
+document.addEventListener('contextmenu',e=>e.preventDefault());document.addEventListener('gesturestart',e=>e.preventDefault());
 load(0,'menu');ban=0;requestAnimationFrame(frame);
 </script>
 </body>
