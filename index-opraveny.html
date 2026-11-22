@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Humříkův Sidequest</title>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#14122b;color:#fff;font-family:'Trebuchet MS',Verdana,sans-serif;text-align:center}
+#w{position:relative;max-width:960px;margin:0 auto}
+canvas{width:100%;height:auto;display:block;background:#000}
+.ov{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(20,18,43,.88);overflow:auto}
+.ov[hidden]{display:none}
+.paper{background:#fbf1d3;color:#2b1d1d;border:3px solid #2b1d1d;border-radius:10px;padding:1.2em 1.6em;max-width:560px;text-align:left;font-size:clamp(12px,2.1vw,17px);line-height:1.45;box-shadow:6px 6px 0 #2b1d1d}
+.paper h2{margin:0 0 .4em;text-align:center;letter-spacing:.08em}
+.paper ol{padding-left:1.3em;margin:.5em 0}
+#sg{margin-top:.8em;border-bottom:3px solid #2b1d1d;min-height:1.8em;cursor:pointer;font:600 2.3em 'Caveat','Georgia',serif;color:#1f3fa0;padding-left:.3em}
+#sg:not(.on)::before{content:'✎ klikni sem a podepiš';font:.6em 'Trebuchet MS',sans-serif;color:#888}
+#sg.on{cursor:default}
+.cp{border:3px dashed #2b1d1d;border-radius:10px;padding:1em 1.2em;margin-top:.6em;text-align:center;background:#fff8dc}
+.cp .t{display:block;font-size:1.6em;letter-spacing:.25em;font-weight:bold}
+.cp .sub{font-size:.95em;margin-top:.2em}
+.cp .dt{font-size:2.6em;font-weight:bold;color:#c0262d;line-height:1.1;margin:.2em 0}
+.cp ul{list-style:none;margin:.5em 0;padding:0}.cp li{margin:.2em 0}
+.cp .pl{margin-top:.7em;padding-top:.6em;border-top:2px dotted #2b1d1d}.cp .pl span{display:block;font-size:.75em;letter-spacing:.15em;text-transform:uppercase;color:#6b5b4b}
+.cp small{display:block;margin-top:1em;font-size:.65em;color:#6b5b4b}
+button{font:inherit;background:none;border:0;color:#9aa;cursor:pointer;text-decoration:underline;margin:.5em}
+#mnu{z-index:2;overflow:hidden;background:linear-gradient(#262a6b,#7b4bb8 55%,#ff8a5c)}
+#mnu::before{content:'';position:absolute;inset:0;opacity:.55;background:radial-gradient(#fff 1px,transparent 2px) 0 0/60px 60px,radial-gradient(#fffc 1px,transparent 2px) 30px 30px/90px 90px}
+#mnu::after{content:'';position:absolute;left:0;right:0;bottom:0;height:20%;background:#1bb8cc;border-top:4px solid #2b1d1d}
+.mn{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center}
+.mn h1{margin:0;font:600 clamp(40px,10vw,92px)/.95 'Caveat','Georgia',serif;color:#ffd23f;text-shadow:3px 3px 0 #2b1d1d,-2px -2px 0 #2b1d1d,2px -2px 0 #2b1d1d,-2px 2px 0 #2b1d1d}
+#mh{width:min(38%,250px);margin:.3em 0;animation:bob 2.4s ease-in-out infinite}
+.fl{position:absolute;height:clamp(50px,13vw,110px);animation:bob 3s ease-in-out infinite}
+.f1{left:9%;top:52%}.f2{right:10%;top:38%;animation-delay:.6s}.f3{left:18%;top:10%;animation-delay:1.2s}
+@keyframes bob{50%{transform:translateY(-14px) rotate(3deg)}}
+#go,#stb,#tit{font:bold clamp(16px,3vw,24px) 'Trebuchet MS',sans-serif;color:#2b1d1d;background:#ffd23f;border:3px solid #2b1d1d;border-radius:14px;padding:.6em 1.4em;cursor:pointer;text-decoration:none;box-shadow:5px 5px 0 #2b1d1d;margin:.6em}
+#go:hover,#stb:hover,#tit:hover{transform:translate(2px,2px);box-shadow:3px 3px 0 #2b1d1d}
+    #cred{background:#14122b;overflow:hidden}
+.cr{position:relative;width:100%;height:100%;overflow:hidden;text-align:center;color:#fff;font-size:clamp(13px,2.6vw,22px);line-height:1.4}
+.crin{position:absolute;left:0;right:0;top:100%;padding:0 6% 28%;animation:roll 45s linear forwards}
+.crin h2{font:600 2.6em 'Caveat','Georgia',serif;color:#ffd23f;margin:.2em 0 1em}
+.crin p{margin:0 0 1.4em}.crin small{display:block;color:#ffb3c7;letter-spacing:.15em;text-transform:uppercase;font-size:.65em}
+@keyframes roll{to{transform:translateY(-100%)}}
+#cb{position:absolute;right:10px;bottom:6px;z-index:2}
+</style>
+</head>
+<body>
+<div id="w">
+<canvas id="c" width="960" height="560"></canvas>
+    <!-- MENU -->
+<div class="ov" id="mnu"><img class="fl f1" src="jager.png" alt=""><img class="fl f2" src="pivo.png" alt=""><img class="fl f3" src="desperados.png" alt="">
+<div class="mn"><h1>Humříkův<br>Sidequest</h1><img id="mh" src="humrik.gif" alt="Humřík"><button id="go">Podepsat smlouvu</button></div></div>
+
+<!-- ÚVOD: smlouva (texty si klidně uprav) -->
+<div class="ov" id="intro" hidden><div class="paper">
+<h2>SMLOUVA</h2>
+<p>uzavřená mezi <b>Vývojářem</b> (dále jen „Vývojář“) a <b>Humříkem</b> (dále jen „Humřík“).</p>
+<ol>
+<li>Humřík se zavazuje v každém levelu sebrat Jägermeistera, pivo a Desperados.</li>
+<li>Humřík se zavazuje na konci každého levelu sklouznout po zadku.</li>
+<li>Dokud Humřík nemá všechno, je ještě moc opilý.</li>
+<li>Humřík se zavazuje u toho nejméně jednou usmát.</li>
+</ol>
+<p><small>Ovládání: A / D = pohyb, mezerník = skok.</small></p>
+<div id="sg"></div>
+</div></div>
+<!-- TITULKY (obsah si uprav podle sebe) -->
+<div class="ov" id="cred" hidden><div class="cr"><div class="crin">
+<h2>Humříkův Sidequest</h2>
+<p><small>Režie a scénář</small>Adam Šimek</p>
+<p><small>V Hlavní roli</small>Humřík</p>
+<p><small>Vedlejší role</small>Adam Šimek<br>Kebab</p>
+<p><small>Nápoje</small>Jägermeister<br>Pivo<br>Desperados</p>
+<p><small>Prostředí</small>Discord · Smlouva · Kino · Prezentace · Silvestr</p>
+<p><small>Speciální poděkování</small>Smlouvě za to, že existuje<br>Humříkově terapii<br>Dlouhým večerům na Discordu s Humříkem</p>
+<p><small>Upozornění</small>Při tvorbě nebyl zraněn žádný humr.</p>
+<p><small>Jakákoli podobnost se skutečností je čistě náhodná.</small></p>
+<p><b>Konec</b></p>
+</div></div><button id="cb">zpět na poukaz</button></div>
+<!-- KONEC: poukaz (texty si klidně uprav) -->
+    <!-- PŘÍBĚH po podpisu smlouvy -->
+<div class="ov" id="story" hidden><div class="paper">
+<h2>Humříkův Sidequest</h2>
+<p>Humřík se vydal na výpravu. Musí zdolat všechny překážky, aby se dostal k hlavní výhře.</p>
+<p>Co je to za výhru? To je tajné. Prý se ale nedá koupit, dá se jen osobně vyzvednout.</p>
+<p>Má to ale háček: kdyby byl Humřík moc opilý, všechny překážky by nezvládl.</p>
+<p>Pomoz mu dojít do cíle a získat odměnu. A dávej pozor, ať neuklouzneš!</p>
+<p><small><i>Jakákoli podobnost se skutečností je čistě náhodná.</i></small></p>
+<p style="text-align:center"><button id="stb">Přijmout sidequest</button></p>
+</div></div>
+<div class="ov" id="end" hidden><div class="paper">
+<h2>Úkol splněn!</h2>
+<p style="text-align:center"><li>Podpis Humříka je nutné osobně ověřit u Vývojáře, a to dne 31. 12.... a nebo kdykoliv jindy.</li></p>
+<div class="cp">
+<b class="t">POUKAZ</b>
+<div class="sub">na osobní setkání s vývojářem</div>
+<div class="dt">31. 12. nebo kdykoliv jindy</div>
+<ul>
+<li>Nelze vyměnit za peníze.</li>
+<li>Uplatnit ho může pouze <b>Střízlivý Humřík</b>.</li>
+</ul>
+<div class="pl"><span>Místo setkání</span><b>McPárty</b> · <b>Brno</b> · <b>Chata</b><br>nebo jiné místo po domluvě s vývojářem</div>
+<small>Upozornění: Vývojář má tendenci se na tebe těšit</small>
+</div>
+    <p style="text-align:center"><button id="tit">Titulky</button></p>
+</div></div>
+</div>
+<p><button id="sk">přeskočit level</button></p>
+
+<script>
+const C=document.getElementById('c'),c=C.getContext('2d'),W=960,H=560,T=40,O='#2b1d1d',F='Trebuchet MS,Verdana,sans-serif';
+const SP=new Image();
+SP.onerror=()=>{if(!SP.dataset.t){SP.dataset.t=1;SP.src='hum-k-postava.gif'}}; // záloha, kdyby soubor měl původní název
+SP.src='humrik.gif';
+    const VY=new Image();VY.src='vyvojar-anim.png';
+
+// Nápoje: obrázky jager.png / pivo.png / desperados.png (když se nenačtou, nakreslí se barevné čtverečky)
+const D={J:{n:'Jägermeister',f:'#1f6b3a',ch:'J',m:'Jäger!',s:'jager.png'},B:{n:'pivo',f:'#f2b632',ch:'P',m:'Pivo!',s:'pivo.png'},D:{n:'Desperados',f:'#e8552d',ch:'D',m:'Desperados!',s:'desperados.png'}};
+for(const k in D){D[k].i=new Image();D[k].i.src=D[k].s}
+function drawDrink(t,x,y,h=54){const d=D[t],i=d.i;
+ if(i.complete&&i.naturalWidth){const w=h*i.naturalWidth/i.naturalHeight;c.drawImage(i,x-w/2,y+20-h,w,h)}
+ else{rr(x-14,y-14,28,28,6,d.f);tx(d.ch,x,y+7,18,'#fff','center')}}
+
+// Levely: p=[x,y,w] platformy v dílcích (y>=11 je zem, záporné y = vysoko nad obrazovkou), i=[nápoj,x,y], ex=konec (skluzavka)
+const zz=(x,y,n,dx,w=3)=>Array.from({length:n},(_,i)=>[x+(i%2?dx:0),y-i*3,w]); // věž: platformy střídavě vlevo a vpravo, každá o 3 řady výš
+const LV=[
+{n:'Discord',pc:['#5865f2','#8a94ff'],ex:68,i:[['J',11,6],['B',20,10],['D',38,8]],
+ p:[[0,11,12],[15,11,9],[27,11,10],[40,11,12],[55,11,13],[6,9,3],[10,7,3],[37,9,2],[44,9,3],[47,7,3],[58,9,3]]},
+{n:'Smlouva',pc:['#2b579a','#6c9ae0'],ex:24,fx:1,s:[2.071,-17.1],i:[['B',12.357,-17],['J',19.214,-6.5],['D',2.071,1]],ld:[[15.836,-10.25,0.9,6.25],[2.121,7,0.9,4],[19.264,-17,0.9,7.75]],sg:[[377,0],[677,1]],
+ p:[[0,-19,1.714,30.75],[22.286,-19,1.714,27.75],[0,11,24],[1.714,-16,3.429,0.75],[5.143,-15.25,1.714,3],[5.143,-13,13.714,0.75],[17.143,-16,1.714,3.75],[8.571,-14.5,1.714,0.75],[12,-16,1.714,0.75],[3.429,-9.25,1.714,0.75],[5.143,-9.25,1.714,6],[5.143,-4,13.714,0.75],[17.143,-9.25,1.714,6],[17.143,-9.25,5.143,0.75],[13.714,-8.5,1.714,0.75],[8.571,-7.75,1.714,0.75],[1.714,-7,1.714,0.75],[3.429,-4.75,1.714,0.75],[18.857,-5.5,1.714,0.75],[20.571,-2.5,1.714,0.75],[1.714,-1.75,1.714,0.75],[3.429,-1,1.714,0.75],[5.143,-0.25,1.714,0.75],[6.857,0.5,1.714,0.75],[8.571,1.25,1.714,0.75],[10.286,2,1.714,0.75],[12,2.75,1.714,0.75],[13.714,3.5,1.714,0.75],[15.429,4.25,1.714,0.75],[17.143,5,1.714,0.75],[17.143,-0.25,1.714,0.75],[1.714,2,1.714,0.75],[20.571,2,1.714,0.75],[5.143,4.25,1.714,0.75],[8.571,5.75,1.714,0.75],[3.429,8,18.857,0.75]]},
+{n:'Kino',pc:['#7a1526','#e0b84a'],ex:80,i:[['J',13,8],['B',28,-8],['D',52,-8]],
+ p:[[0,11,7],[20,11,12],[36,11,4],[44,11,12],[60,11,20],[9,10,2],[13,9,2],[17,10,2],...zz(21,8,6,6),...zz(45,8,6,6)]},
+{n:'Prezentace',pc:['#2f6fd6','#6fa0f5'],ex:90,i:[['B',16,6],['D',37,-8],['J',63,-8]],
+ p:[[0,11,6],[28,11,13],[46,11,4],[54,11,14],[72,11,18],[8,10,2],[12,9,2],[16,7,2],[20,9,2],[24,8,2],...zz(29,8,6,7),...zz(55,8,6,7)]},
+{n:'Silvestr',pc:['#2d3270','#ffd23f'],ex:100,i:[['J',20,-11],['D',51,-8],['B',64,5]],
+ p:[[0,11,6],[11,11,3],[18,11,12],[35,11,3],[42,11,12],[72,11,28],[56,10,2],[60,8,2],[64,6,2],[68,8,2],...zz(19,8,7,7),...zz(43,8,6,7)]}
+];
+
+// pomocné kreslení
+const rr=(x,y,w,h,r,f,s=1)=>{c.beginPath();c.roundRect(x,y,w,h,r);c.fillStyle=f;c.fill();if(s){c.lineWidth=3;c.strokeStyle=O;c.stroke()}};
+const ci=(x,y,r,f,s=1)=>{c.beginPath();c.arc(x,y,r,0,7);c.fillStyle=f;c.fill();if(s){c.lineWidth=3;c.strokeStyle=O;c.stroke()}};
+const tx=(s,x,y,z,f,a='left',o=0)=>{c.font='bold '+z+'px '+F;c.textAlign=a;if(o){c.lineWidth=6;c.lineJoin='round';c.strokeStyle=O;c.strokeText(s,x,y)}c.fillStyle=f;c.fillText(s,x,y)};
+const G=(a,b)=>{const g=c.createLinearGradient(0,0,0,H);g.addColorStop(0,a);g.addColorStop(1,b);c.fillStyle=g;c.fillRect(0,0,W,H)};
+let cam=0,time=0;
+const ea=(g,k,f)=>{const n=Math.ceil(1200/g),s=g*n;for(let i=0;i<n;i++){let x=(i*g-cam*k)%s;if(x<-g)x+=s;f(x,i)}};
+// Plakáty v kině (další plakát = přidej název souboru do seznamu) a slidy v Prezentaci (SL = počet slidů)
+const PO=['plakat1.jpg','plakat2.jpg','plakat3.jpg','plakat4.jpg','plakat5.jpg','plakat6.jpg','plakat7.jpg'].map(f=>{const m=new Image();m.src=f;return m});
+const SL=Array.from({length:8},(_,i)=>{const m=new Image();m.src='slide'+(i+1)+'.jpg';return m});
+// Pozadí levelů
+const BG=[
+()=>{G('#262a6b','#5b45b0');
+ const A=[['m','To se nestane'],['c','# kuchyňská linka'],['m','Šílený'],['v','🔊 Škarpa'],['m','Panáka ?']],
+ B=[['v','🔊 Kuchyně'],['m','Porušil jsi smlouvu!'],['v','🔊 1v1 Tavernie'],['m','Líbíš se mi'],['m','Jsem kantáres']];
+ const row=(a,y0,off)=>a.forEach(([t,s],i)=>{const g=300,per=g*a.length;let x=(i*g+off-cam*.45)%per;if(x<-g)x+=per;const y=y0+(i*47%60);c.font='bold 19px '+F;const w=c.measureText(s).width;
+  if(t=='m'){ci(x+20,y+22,20,['#f06292','#ffb74d','#4dd0e1'][i%3]);ci(x+34,y+36,7,'#3ba55d');rr(x+48,y,w+28,44,16,'#2a2d7a');tx(s,x+62,y+29,19,'#fff')}
+  else{rr(x,y,w+44,44,22,t=='v'?'#2f8a6a':'#4a4fc4');tx(s,x+22,y+29,19,'#fff')}});
+ row(A,50,0);row(B,200,150)},
+()=>{c.fillStyle='#d9dee7';c.fillRect(0,0,W,H);c.fillStyle='#fff';c.fillRect(60,0,W-120,H);c.fillStyle='#c4ccda';c.fillRect(57,0,3,H);c.fillRect(W-60,0,3,H);
+ const s=Math.max(0,Math.min(1,(camY-L.top)/Math.max(1,-L.top))),R=['I','II','III','IV','V','VI','VII','VIII'];
+ R.forEach((r,i)=>{const y=80+i*170-s*860;if(y<-60||y>H+20)return;
+  tx('Článek '+r,100,y,30,'#aab6cc');c.fillStyle='#eef1f6';for(let j=0;j<4;j++)c.fillRect(100,y+16+j*18,j==3?260:W-200,8)});
+ c.fillStyle='#2b579a';c.fillRect(0,0,W,20);tx('Smlouva.docx – Word',W/2,15,13,'#fff','center')},
+()=>{G('#1b1030','#3d1a4d');
+ const g=240,per=g*PO.length;
+ PO.forEach((m,i)=>{let x=(i*g-cam*.4)%per;if(x<-g)x+=per;
+  if(m.complete&&m.naturalWidth){const h=215,w=h*m.naturalWidth/m.naturalHeight;c.drawImage(m,x,70,w,h);c.strokeStyle=O;c.lineWidth=4;c.strokeRect(x,70,w,h)}});
+ for(let i=0;i<5;i++){c.fillStyle=i%2?'#a5223a':'#7a1526';c.fillRect(i*14,0,14,H);c.fillRect(W-70+i*14,0,14,H)}
+ c.fillStyle=O;c.fillRect(70,0,3,H);c.fillRect(W-73,0,3,H);
+ for(let x=20;x<W;x+=40)ci(x,18,6,((x/40|0)+(time>>4))%2?'#ffd23f':'#8a6a1a',0)},
+()=>{const n=SL.length,t=Math.min(1,cam/Math.max(1,L.ex*T+360-W))*(n-1),i=Math.floor(t),j=Math.min(n-1,i+1),f=Math.max(0,Math.min(1,(t-i-.35)/.3));
+ c.fillStyle='#fff';c.fillRect(0,0,W,H);
+ if(SL[i].complete&&SL[i].naturalWidth)c.drawImage(SL[i],0,0,W,H);
+ if(f>0&&SL[j].complete&&SL[j].naturalWidth){c.globalAlpha=f;c.drawImage(SL[j],0,0,W,H);c.globalAlpha=1}
+ tx('Slide '+((f>.5?j:i)+1)+'/'+n,W-16,28,16,'#8a8a99','right')},
+()=>{G('#070b2e','#2b2f80');c.fillStyle='#fff';
+ for(let i=0;i<50;i++){c.globalAlpha=.5+.5*Math.sin(time*.05+i);c.fillRect((i*97)%W,(i*53)%330,2,2)}c.globalAlpha=1;
+ const sx=540-cam*.1;c.fillStyle='#777';c.fillRect(sx+100,370,20,80);rr(sx,170,220,200,24,'#da291c');
+ c.strokeStyle='#ffc72c';c.lineWidth=18;c.lineCap='round';c.lineJoin='round';c.beginPath();c.moveTo(sx+54,330);c.lineTo(sx+54,255);c.arc(sx+82,255,28,Math.PI,0);c.arc(sx+138,255,28,Math.PI,0);c.lineTo(sx+166,330);c.stroke();c.lineCap='butt';
+ const col=['#ff5a5f','#ffd23f','#4dd0e1','#b388ff'];
+ for(let k=0;k<4;k++){const t=time/70+k*.6,sd=Math.floor(t/2.2),ph=t%2.2;if(ph<1){const cx=(sd*173+k*251)%800+80,cy=70+(sd*59+k*41)%110;
+  for(let a=0;a<14;a++){const g=a*.449;ci(cx+Math.cos(g)*ph*80,cy+Math.sin(g)*ph*80+ph*ph*20,4*(1-ph)+1,col[k],0)}}}}
+];
+
+// Stav hry
+let st='menu',li=0,L,RS,RL=[],sgd=[],got,p,safe,gt=0,camY=0,bub={t:0,s:''},ban=0,fade=0,slideT=0,pj=0;
+const keys={};
+const hit=(a,b)=>a.x<b.x+b.w&&a.x+a.w>b.x&&a.y<b.y+b.h&&a.y+a.h>b.y;
+const say=(s,t=70)=>{bub.s=s;bub.t=t};
+function load(n,s='play'){li=n;L=LV[n];L.top=Math.min(0,Math.min(...L.p.map(a=>a[1]))*T-160);RS=L.p.map(([x,y,w,h])=>({x:x*T,y:y*T,w:w*T,h:(h||(y>=11?14-y:1))*T}));
+ RL=(L.ld||[]).map(([x,y,w,h])=>({x:x*T,y:y*T,w:w*T,h:h*T}));sgd=[];
+ const sx=L.s?L.s[0]*T:60,sy=L.s?L.s[1]*T:396;
+ got={};safe=[sx,sy];gt=0;p={x:sx,y:sy,w:40,h:44,vx:0,vy:0,f:1,g:0,coy:0,buf:0,sl:0,rot:0,v:0,lad:0};camY=Math.max(L.top,Math.min(0,sy-300));cam=0;ban=150;fade=1;slideT=0;bub.t=0;st=s}
+function next(){if(li>=4){st='end';end.hidden=false;fade=0;return}load(li+1)}
+
+function upd(){time++;if(ban>0)ban--;if(bub.t>0)bub.t--;
+ if(st==='slide')return slide();if(st!=='play')return;
+ if(fade>0)fade=Math.max(0,fade-.03);
+ const l=keys.a||keys.arrowleft,r=keys.d||keys.arrowright,up=keys.w||keys.arrowup,dn=keys.s||keys.arrowdown;
+ const ld=RL.some(q=>hit({x:p.x+8,y:p.y,w:p.w-16,h:p.h},q));if(ld&&(up||dn))p.lad=1;if(!ld)p.lad=0;
+ const j=keys[' ']||(up&&!p.lad);
+ p.vx+=(((r?1:0)-(l?1:0))*4.2-p.vx)*.25;if(r&&!l)p.f=1;if(l&&!r)p.f=-1;
+p.vy=p.lad?((dn?1:0)-(up?1:0))*2.6:Math.min(p.vy+.6,14);
+ if(j&&!pj)p.buf=6;else p.buf--;pj=j;p.coy=p.g?6:p.coy-1;
+ if(p.lad&&keys[' ']&&p.buf>0){p.lad=0;p.vy=-11;p.buf=0}else if(p.buf>0&&p.coy>0&&!p.lad){p.vy=-14;p.buf=0;p.coy=0}
+ if(!j&&p.vy<-5)p.vy=-5;
+ p.x+=p.vx;for(const q of RS)if(hit(p,q)){p.x=p.vx>0?q.x-p.w:q.x+q.w;p.vx=0}
+ p.g=0;p.y+=p.vy;for(const q of RS)if(hit(p,q)){if(p.vy>0){p.y=q.y-p.h;p.g=1}else p.y=q.y+q.h;p.vy=0}
+ if(p.x<0)p.x=0;
+ if(p.g){if(++gt>=6)safe=[p.x,p.y]}else gt=0;
+ if(p.y>H+150){p.x=safe[0];p.y=safe[1];p.vx=p.vy=0;say('Jsem kantáres!',50)}
+ for(const m of L.i){const x=m[1]*T+20,y=m[2]*T+20;if(!got[m[0]]&&Math.abs(p.x+20-x)<34&&Math.abs(p.y+22-y)<40){got[m[0]]=1;say(D[m[0]].m)}}
+ const e=L.ex*T;
+ if(p.x+p.w>e-20){const miss=Object.keys(D).filter(k=>!got[k]).map(k=>D[k].n);
+  if(!miss.length){st='slide';slideT=0;p.v=0;p.sl=0;p.vx=0}
+  else{p.x=e-20-p.w;p.vx=0;say('Jsem ještě moc opilý! Chybí mi: '+miss.join(', ')+'.',120)}}
+ if(L.sg)L.sg.forEach(([x],i)=>{if(!sgd[i]&&p.x+20>x&&p.y>300)sgd[i]=time});
+ cam+=(Math.max(0,Math.min(L.ex*T+360-W,(L.fx&&p.y<310)?0:p.x-380))-cam)*.12;camY+=(Math.max(L.top,Math.min(0,p.y-300))-camY)*.1}
+
+function slide(){slideT++;camY*=.9;const e=L.ex*T;
+ if(!p.sl){p.x+=3;if(p.x+p.w/2>=e){p.sl=1;p.q=0;p.f=-1;say('Tak to se nestalo',230)}}
+ else{p.q++;p.x+=1+Math.min(.7,p.q*.01);const d=Math.max(0,p.x+p.w/2-e);p.y=396+d;p.rot=Math.min(.7,d/80);
+  if(p.q>210)fade=(p.q-210)/25;if(p.q>235)next()}}
+               function signature(x,k,t){const y=388,a=t?Math.min(1,(time-t)/20):0;
+ c.strokeStyle='#556';c.lineWidth=2;c.beginPath();c.moveTo(x-75,y);c.lineTo(x+75,y);c.stroke();
+ tx(k?'Podpis svědka':'Podpis účastníka',x,y+16,13,'#556','center');
+ if(a>0){c.globalAlpha=a;
+  if(!k){c.font="600 38px Caveat,Georgia,serif";c.textAlign='center';c.fillStyle='#1f3fa0';c.fillText('Humřík',x,y-4)}
+  else{c.save();c.translate(x,y-19);c.beginPath();c.moveTo(-34,0);c.quadraticCurveTo(-8,-4,26,-17);c.quadraticCurveTo(18,-5,22,0);c.quadraticCurveTo(18,5,26,17);c.quadraticCurveTo(-8,4,-34,0);c.closePath();c.fillStyle='#ff9f43';c.fill();c.strokeStyle=O;c.lineWidth=3;c.stroke();c.lineWidth=2;c.beginPath();c.moveTo(-14,0);c.lineTo(20,-10);c.moveTo(-14,0);c.lineTo(20,10);c.stroke();c.restore()}
+  c.globalAlpha=1}}
+
+function drawP(){const dw=84,dh=SP.naturalHeight?dw*SP.naturalHeight/SP.naturalWidth:dw,ok=SP.complete&&SP.naturalWidth;
+ c.save();
+ if(st==='slide'&&p.sl){ // sjíždí po zádech: břichem nahoru, ocasem napřed
+  const x=p.x+p.w/2,d=Math.max(0,x-L.ex*T),k=Math.min(1,d/60),a=.785*k,h=dh*.36;
+  c.translate(x+Math.sin(a)*h,440+d-Math.cos(a)*h);c.rotate(3.93*k);
+  if(ok)c.drawImage(SP,-dw/2,-dh/2,dw,dh);else{c.fillStyle='#c0262d';c.fillRect(-22,-22,44,44)}}
+ else{
+  const rot=p.g?(Math.abs(p.vx)>.5?Math.sin(time*.4)*.1:0):Math.max(-.3,Math.min(.3,p.vy*.025));
+  c.translate(p.x+p.w/2,p.y+p.h);c.rotate(rot*p.f);c.scale(p.f,1);
+  if(ok)c.drawImage(SP,-dw/2,-dh+8,dw,dh);else{c.fillStyle='#c0262d';c.fillRect(-22,-44,44,44);c.strokeStyle=O;c.lineWidth=3;c.strokeRect(-22,-44,44,44)}}
+ c.restore()}
+
+function draw(){BG[li]();c.save();c.translate(-Math.round(cam),-Math.round(camY));
+ const e=L.ex*T;c.fillStyle=L.pc[1];c.strokeStyle=O;c.lineWidth=3;c.beginPath();c.moveTo(e,440);c.lineTo(e+420,860);c.lineTo(e,860);c.fill();c.stroke();
+ for(const q of RS){if(q.x+q.w<cam||q.x>cam+W)continue;c.fillStyle=L.pc[0];c.fillRect(q.x,q.y,q.w,q.h);c.fillStyle=L.pc[1];c.fillRect(q.x,q.y,q.w,10);c.strokeRect(q.x,q.y,q.w,q.h)}
+               for(const q of RL){c.strokeStyle='#8a4b1f';c.lineWidth=5;c.beginPath();c.moveTo(q.x+4,q.y);c.lineTo(q.x+4,q.y+q.h);c.moveTo(q.x+q.w-4,q.y);c.lineTo(q.x+q.w-4,q.y+q.h);c.stroke();c.strokeStyle='#c0661e';c.lineWidth=4;c.beginPath();for(let y=q.y+10;y<q.y+q.h;y+=16){c.moveTo(q.x+4,y);c.lineTo(q.x+q.w-4,y)}c.stroke();c.lineWidth=3;c.strokeStyle=O}
+if(L.sg)L.sg.forEach(([x,k],i)=>signature(x,k,sgd[i]));
+                if(li===4&&VY.complete&&VY.naturalWidth){const h=180,fw=VY.naturalWidth/30;c.drawImage(VY,(Math.floor(time/10)%30)*fw,0,fw,VY.naturalHeight,92*T,440-h,h*fw/VY.naturalHeight,h)}
+ for(const m of L.i)if(!got[m[0]])drawDrink(m[0],m[1]*T+20,m[2]*T+20+Math.sin(time*.07+m[1])*4);
+ drawP();
+ if(bub.t>0){c.font='bold 18px '+F;const w=c.measureText(bub.s).width+24;const sl=st==='slide',by=(sl?396:p.y)-64;let bx=(sl?L.ex*T-30:p.x+20)-w/2;bx=Math.max(cam+8,Math.min(cam+W-w-8,bx));rr(bx,by,w,34,12,'#fff');tx(bub.s,bx+w/2,by+23,18,O,'center')}
+ c.restore();
+ Object.keys(D).forEach((k,i)=>{rr(16+i*46,14,38,38,8,'rgba(0,0,0,.4)');c.globalAlpha=got[k]?1:.3;drawDrink(k,35+i*46,30,32);c.globalAlpha=1});
+ for(const m of L.i)if(!got[m[0]]){const sy=m[2]*T+20-camY,sx=m[1]*T+20-cam;if(sy<0&&sx>20&&sx<W-20){tx('▲',sx,44,18,'#fff','center',1);drawDrink(m[0],sx,68,40)}}
+ if(ban>0){c.globalAlpha=Math.min(1,ban/30);tx('Level '+(li+1)+': '+L.n,W/2,260,46,'#fff','center',1);c.globalAlpha=1}
+ if(fade>0){c.fillStyle='rgba(0,0,0,'+Math.min(1,fade)+')';c.fillRect(0,0,W,H)}}
+
+let last=0,acc=0;
+function frame(t){requestAnimationFrame(frame);acc+=Math.min(t-last,100);last=t;
+ try{while(acc>=16.67){upd();acc-=16.67}draw()}catch(e){console.error(e);acc=0}}
+
+addEventListener('keydown',e=>{const k=e.key.toLowerCase();keys[k]=1;if([' ','arrowup','arrowdown','arrowleft','arrowright'].includes(k))e.preventDefault()});
+addEventListener('keyup',e=>{delete keys[e.key.toLowerCase()]});
+document.getElementById('sk').onclick=()=>{if(st==='play'){fade=1;next()}};
+const sg=document.getElementById('sg');
+sg.onclick=()=>{if(sg.classList.contains('on'))return;sg.textContent='Humřík';sg.classList.add('on');setTimeout(()=>{intro.hidden=true;document.getElementById('story').hidden=false},900)};
+document.getElementById('stb').onclick=()=>{document.getElementById('story').hidden=true;st='play';ban=150};
+    document.getElementById('go').onclick=()=>{document.getElementById('mnu').hidden=true;intro.hidden=false};
+    document.getElementById('tit').onclick=()=>{end.hidden=true;document.getElementById('cred').hidden=false};
+document.getElementById('cb').onclick=()=>{document.getElementById('cred').hidden=true;end.hidden=false};
+load(0,'menu');ban=0;requestAnimationFrame(frame);
+</script>
+</body>
+</html>
+<!-- Aktualizace hry -->
